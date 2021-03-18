@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.jwplayer.opensourcedemo">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,7 +34,7 @@
         <!--TODO Set your license key-->
         <meta-data
             android:name="JW_LICENSE_KEY"
-            android:value="" />
+            android:value="zIfk0jeoMIaD+psgI4kO0dkGfGJfcRfqE1ALpvi8tDPyaQsRGXSvjF887KSWnD01" />
 
         <meta-data
             android:name="com.google.android.gms.version"

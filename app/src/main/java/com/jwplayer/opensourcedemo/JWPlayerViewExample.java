@@ -10,9 +10,16 @@ import android.view.MenuItem;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.longtailvideo.jwplayer.JWPlayerView;
+import com.longtailvideo.jwplayer.configuration.PlayerConfig;
 import com.longtailvideo.jwplayer.events.FullscreenEvent;
 import com.longtailvideo.jwplayer.events.listeners.VideoPlayerEvents;
+import com.longtailvideo.jwplayer.freewheel.media.ads.FwSettings;
+import com.longtailvideo.jwplayer.media.ads.AdSource;
+import com.longtailvideo.jwplayer.media.ads.VMAPAdvertising;
 import com.longtailvideo.jwplayer.media.playlists.PlaylistItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,11 +28,18 @@ import androidx.appcompat.app.AppCompatActivity;
 public class JWPlayerViewExample extends AppCompatActivity
 		implements VideoPlayerEvents.OnFullscreenListener {
 
+	private static final int FREEWHEEL_NETWORK_ID = 111;
 	private JWPlayerView mPlayerView;
 
 	private CastContext mCastContext;
 
-	private CallbackScreen mCallbackScreen;
+
+	int networkId = FREEWHEEL_NETWORK_ID;
+	String serverId = "FREEWHEEL_SERVER_ID";
+	String profileId = "FREEWHEEL_PROFILE_ID";
+	String sectionId = "FREEWHEEL_SECTION_ID";
+	String mediaId = "FREEWHEEL_MEDIA_ID";
+	FwSettings settings = new FwSettings(networkId, serverId, profileId, sectionId, mediaId);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,21 +56,27 @@ public class JWPlayerViewExample extends AppCompatActivity
 		new KeepScreenOnHandler(mPlayerView, getWindow());
 
 		// Event Logging
-		mCallbackScreen = findViewById(R.id.callback_screen);
-		mCallbackScreen.registerListeners(mPlayerView);
 
-		// Load a media source
-		PlaylistItem pi = new PlaylistItem.Builder()
-				.file("https://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8")
-				.title("BipBop")
-				.description("A video player testing video.")
+		VMAPAdvertising vmapAdvertising = new VMAPAdvertising(AdSource.VAST,"https://playertest.longtailvideo.com/adtags/vmap2.xml");
+
+
+
+
+// Create a playlist, you'll need this to build your player config
+		List<PlaylistItem> playlist = new ArrayList<PlaylistItem>();
+
+		PlaylistItem video = new PlaylistItem("http://103.89.68.179:1935/mediacache/_definst_/smil:path1/67d1f04e-71a4-4744-a8c9-c1c85f08f508.smil/playlist.m3u8");
+		playlist.add(video);
+
+
+// Create your player config
+		PlayerConfig playerConfig = new PlayerConfig.Builder()
+				.playlist(playlist)
+				.advertising(vmapAdvertising)
 				.build();
 
-		mPlayerView.load(pi);
-
-		// Get a reference to the CastContext
-		mCastContext = CastContext.getSharedInstance(this);
-
+// Setup your player with the config
+		mPlayerView.setup(playerConfig);
 
 	}
 
